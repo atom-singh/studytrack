@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyTrack — Consistency Engine for UPSC, JEE, and NEET</title>
+    <meta name="description" content="Master your competitive exams with StudyTrack. Track your subjects, run study timers, analyze weekly reports, and build daily study streaks.">
+    <!-- Google Fonts: Outfit for titles, Inter for body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Lucide Icons (CDN) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Razorpay Checkout SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+    <!-- Notification Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Navigation Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-group" id="logo-btn" style="cursor: pointer;">
+                <div class="logo-icon">
+                    <i data-lucide="compass"></i>
+                </div>
+                <span class="logo-text">Study<span class="logo-accent">Track</span></span>
+            </div>
+            
+            <!-- Navigation for Logged-In Users -->
+            <nav id="logged-in-nav" class="nav-links hidden">
+                <button id="nav-dashboard-btn" class="nav-link active">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button id="nav-reports-btn" class="nav-link">
+                    <i data-lucide="bar-chart-2"></i>
+                    <span>Weekly Report</span>
+                </button>
+            </nav>
+
+            <!-- User Auth Controls -->
+            <div class="auth-controls">
+                <div id="logged-out-controls" class="btn-group">
+                    <button id="header-login-btn" class="btn btn-secondary btn-sm">Log In</button>
+                    <button id="header-register-btn" class="btn btn-primary btn-sm">Get Started</button>
+                </div>
+                <div id="logged-in-controls" class="user-profile-group hidden">
+                    <!-- Streak Badging in Header -->
+                    <div class="header-streak-badge" id="header-streak-badge" title="Your Current Study Streak">
+                        <i data-lucide="flame" class="streak-icon"></i>
+                        <span id="header-streak-count">0</span> Days
+                    </div>
+                    <!-- Premium PRO indicator -->
+                    <div class="premium-badge hidden" id="header-premium-badge" title="Premium Active">
+                        <i data-lucide="crown"></i>
+                        <span>PRO</span>
+                    </div>
+                    <span id="user-display-email" class="user-email">aspirant@example.com</span>
+                    <button id="logout-btn" class="btn btn-outline btn-sm">
+                        <i data-lucide="log-out"></i>
+                        <span class="btn-text-desktop">Log Out</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-content">
+
+        <!-- 1. LANDING PAGE VIEW -->
+        <section id="landing-view" class="view-section">
+            <div class="hero-section">
+                <div class="badge-accent">Designed for UPSC, JEE, and NEET Aspirants</div>
+                <h1 class="hero-title">Crack Your Dream Exam with <span class="text-gradient">Focused Tracking</span></h1>
+                <p class="hero-subtitle">
+                    UPSC, JEE, and NEET are marathons, not sprints. Eliminate guesswork, track study hours, build daily streaks, and visualize your weekly progress to achieve consistency.
+                </p>
+                <div class="hero-cta-group">
+                    <button id="hero-cta-btn" class="btn btn-primary btn-lg">Start Tracking Free</button>
+                    <a href="#benefits-section" class="btn btn-secondary btn-lg">Learn How It Works</a>
+                </div>
+            </div>
+
+            <!-- Exam Target Categories -->
+            <div class="exam-tags-section">
+                <span class="exam-tag tag-upsc"><span class="tag-dot"></span> UPSC Civil Services</span>
+                <span class="exam-tag tag-jee"><span class="tag-dot"></span> IIT JEE (Main & Advanced)</span>
+                <span class="exam-tag tag-neet"><span class="tag-dot"></span> NEET Medical</span>
+            </div>
+
+            <!-- Features / Benefits Grid -->
+            <div id="benefits-section" class="benefits-section">
+                <div class="section-header">
+                    <h2 class="section-title">Built to Solve Your Daily Study Challenges</h2>
+                    <p class="section-subtitle">A simple, distraction-free environment that helps you focus on what matters most: studying.</p>
+                </div>
+                <div class="benefits-grid">
+                    <!-- Benefit 1 -->
+                    <div class="benefit-card">
+                        <div class="benefit-icon icon-purple">
+                            <i data-lucide="clock"></i>
+                        </div>
+                        <h3>Precise Subject Timer</h3>
+                        <p>Track your sessions to the exact second. Start the timer when you open your books, pause for short breaks, and stop when you finish a topic.</p>
+                    </div>
+                    <!-- Benefit 2 -->
+                    <div class="benefit-card">
+                        <div class="benefit-icon icon-amber">
+                            <i data-lucide="flame"></i>
+                        </div>
+                        <h3>Consistency Engine</h3>
+                        <p>Build healthy habits with our Streak Tracker. Study for at least 30 minutes daily to keep your streak alive and gamify your exam preparation.</p>
+                    </div>
+                    <!-- Benefit 3 -->
+                    <div class="benefit-card">
+                        <div class="benefit-icon icon-emerald">
+                            <i data-lucide="pie-chart"></i>
+                        </div>
+                        <h3>Weekly Analytics</h3>
+                        <p>Understand your study distribution. Beautiful charts break down exactly how much time you allocate to subjects like Physics, Polity, or Maths.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. AUTHENTICATION VIEW -->
+        <section id="auth-view" class="view-section hidden">
+            <div class="auth-card-container">
+                <!-- Log In Card -->
+                <div id="login-card" class="auth-card">
+                    <h2 class="auth-card-title">Welcome Back</h2>
+                    <p class="auth-card-subtitle">Log in to resume tracking your preparation</p>
+                    
+                    <form id="login-form" class="auth-form">
+                        <div class="form-group">
+                            <label for="login-email">Email Address</label>
+                            <input type="email" id="login-email" required placeholder="name@domain.com" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" required placeholder="••••••••" class="form-input">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Log In</button>
+                    </form>
+                    
+                    <div class="auth-card-footer">
+                        Don't have an account? <a href="#" id="go-to-signup">Sign Up</a>
+                    </div>
+                </div>
+
+                <!-- Sign Up Card -->
+                <div id="signup-card" class="auth-card hidden">
+                    <h2 class="auth-card-title">Create Account</h2>
+                    <p class="auth-card-subtitle">Start building consistent study habits today</p>
+                    
+                    <form id="signup-form" class="auth-form">
+                        <div class="form-group">
+                            <label for="signup-email">Email Address</label>
+                            <input type="email" id="signup-email" required placeholder="name@domain.com" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-password">Password</label>
+                            <input type="password" id="signup-password" required placeholder="Minimum 6 characters" minlength="6" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-confirm-password">Confirm Password</label>
+                            <input type="password" id="signup-confirm-password" required placeholder="••••••••" minlength="6" class="form-input">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                    </form>
+                    
+                    <div class="auth-card-footer">
+                        Already have an account? <a href="#" id="go-to-login">Log In</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. DASHBOARD VIEW -->
+        <section id="dashboard-view" class="view-section hidden">
+            <!-- Welcome banner & Streak Alert -->
+            <div class="dashboard-header-row">
+                <div class="dashboard-greeting">
+                    <h1>Ready to Study, <span id="greeting-username" class="user-highlight">Aspirant</span>?</h1>
+                    <p>Track your sessions, check off subjects, and build your consistency streak.</p>
+                </div>
+                
+                <!-- Streak display widget -->
+                <div class="streak-widget-card">
+                    <div class="streak-widget-glow"></div>
+                    <div class="streak-widget-header">
+                        <div class="streak-widget-icon-container">
+                            <i data-lucide="flame" class="streak-widget-icon"></i>
+                        </div>
+                        <div class="streak-widget-title-group">
+                            <span class="streak-widget-label">Active Streak</span>
+                            <h2 class="streak-widget-value"><span id="dashboard-streak-count">0</span> Days</h2>
+                        </div>
+                    </div>
+                    <div class="streak-widget-progress-bar">
+                        <div id="streak-today-progress" class="streak-progress-fill" style="width: 0%"></div>
+                    </div>
+                    <p class="streak-widget-help" id="streak-progress-text">Study for 30 minutes today to maintain your streak.</p>
+                    
+                    <!-- Custom Target Config (Premium feature) -->
+                    <div class="premium-target-container locked" id="premium-target-container" title="Unlock with StudyTrack Premium">
+                        <div class="lock-overlay"><i data-lucide="lock"></i> PRO</div>
+                        <div class="target-input-row">
+                            <label for="custom-target-input">Daily Goal:</label>
+                            <select id="custom-target-input" class="form-input-xs" disabled>
+                                <option value="15">15 mins</option>
+                                <option value="30" selected>30 mins</option>
+                                <option value="45">45 mins</option>
+                                <option value="60">1 hour</option>
+                                <option value="120">2 hours</option>
+                                <option value="180">3 hours</option>
+                                <option value="240">4 hours</option>
+                                <option value="300">5 hours</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Dashboard Layout Grid -->
+            <div class="dashboard-grid">
+                
+                <!-- Col 1: Active Timer + Subject List -->
+                <div class="dashboard-main-col">
+                    
+                    <!-- Card: Active Timer -->
+                    <div class="glass-card timer-card">
+                        <div class="card-glow"></div>
+                        <div class="timer-header">
+                            <div class="card-title-group">
+                                <i data-lucide="hourglass" class="text-primary"></i>
+                                <h2>Study Timer</h2>
+                            </div>
+                            <span id="timer-active-badge" class="timer-badge inactive">Idle</span>
+                        </div>
+                        
+                        <div class="timer-display-container">
+                            <div class="timer-glow"></div>
+                            <div id="timer-digits" class="timer-digits">00:00:00</div>
+                            <div id="timer-subject-display" class="timer-subject-display">No Subject Selected</div>
+                        </div>
+
+                        <!-- Timer Subject Selector & Controls -->
+                        <div class="timer-controls-group">
+                            <div class="form-group select-group">
+                                <label for="timer-subject-select">Select Subject to Study</label>
+                                <select id="timer-subject-select" class="form-input">
+                                    <option value="" disabled selected>Choose a subject...</option>
+                                    <!-- Dynamic options will go here -->
+                                </select>
+                            </div>
+
+                            <div class="timer-buttons">
+                                <button id="timer-start-btn" class="btn btn-success btn-lg btn-icon" disabled>
+                                    <i data-lucide="play"></i> Start Studying
+                                </button>
+                                <button id="timer-pause-btn" class="btn btn-warning btn-lg btn-icon hidden">
+                                    <i data-lucide="pause"></i> Pause
+                                </button>
+                                <button id="timer-stop-btn" class="btn btn-danger btn-lg btn-icon hidden">
+                                    <i data-lucide="square"></i> Stop & Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card: Today's Summary Details -->
+                    <div class="glass-card summary-card">
+                        <div class="card-header">
+                            <div class="card-title-group">
+                                <i data-lucide="calendar" class="text-emerald"></i>
+                                <h2>Today's Progress</h2>
+                            </div>
+                            <span class="summary-total-time" id="today-total-study-time">0h 0m studied today</span>
+                        </div>
+                        
+                        <div id="today-progress-list" class="today-progress-list">
+                            <!-- Dynamic subject rows with progress bars -->
+                            <div class="empty-state">
+                                <i data-lucide="sparkles" class="empty-icon"></i>
+                                <p>Start a timer above to log study hours for today!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Col 2: Subject Manager + Settings / Tools -->
+                <div class="dashboard-side-col">
+                    
+                    <!-- Premium Upgrade Card -->
+                    <div id="premium-upgrade-card" class="glass-card premium-upgrade-card">
+                        <div class="premium-glow"></div>
+                        <div class="premium-header">
+                            <i data-lucide="crown" class="premium-crown-icon"></i>
+                            <h3>StudyTrack Premium</h3>
+                        </div>
+                        <p class="premium-desc">
+                            Supercharge your exam prep with custom daily study goals, report exports, and premium visual themes.
+                        </p>
+                        <div class="premium-price-row">
+                            <span class="price-val">₹99</span>
+                            <span class="price-term">one-time lifetime access</span>
+                        </div>
+                        <button id="upgrade-premium-btn" class="btn btn-primary btn-block">
+                            <i data-lucide="sparkles"></i> Upgrade to Premium
+                        </button>
+                    </div>
+
+                    <!-- Theme Customizer (Premium feature) -->
+                    <div class="glass-card theme-customizer-card locked" id="theme-customizer-card">
+                        <div class="lock-overlay"><i data-lucide="lock"></i> PRO FEATURES</div>
+                        <div class="card-header">
+                            <div class="card-title-group">
+                                <i data-lucide="palette" class="text-primary"></i>
+                                <h2>Study Themes</h2>
+                            </div>
+                        </div>
+                        <div class="theme-options">
+                            <button class="theme-btn theme-default active" data-theme="default" title="Sunset Rose">
+                                <span class="theme-preview-color" style="background: linear-gradient(135deg, #6366f1, #ec4899);"></span>
+                                <span class="theme-name">Sunset Rose</span>
+                            </button>
+                            <button class="theme-btn theme-ocean" data-theme="ocean" title="Deep Ocean" disabled>
+                                <span class="theme-preview-color" style="background: linear-gradient(135deg, #0ea5e9, #06b6d4);"></span>
+                                <span class="theme-name">Deep Ocean</span>
+                            </button>
+                            <button class="theme-btn theme-forest" data-theme="forest" title="Forest Jade" disabled>
+                                <span class="theme-preview-color" style="background: linear-gradient(135deg, #10b981, #059669);"></span>
+                                <span class="theme-name">Forest Jade</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Subject Manager Card -->
+                    <div class="glass-card subject-manager-card">
+                        <div class="card-header">
+                            <div class="card-title-group">
+                                <i data-lucide="book-open" class="text-violet"></i>
+                                <h2>My Subjects</h2>
+                            </div>
+                        </div>
+                        
+                        <!-- Add Subject Form -->
+                        <form id="add-subject-form" class="add-subject-form">
+                            <div class="input-action-group">
+                                <input type="text" id="new-subject-input" placeholder="e.g., Physics, Polity..." required class="form-input">
+                                <button type="submit" class="btn btn-primary" title="Add Subject">
+                                    <i data-lucide="plus"></i>
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Exam Preset Quick Add -->
+                        <div class="preset-section">
+                            <span class="preset-label">Add Exam Presets:</span>
+                            <div class="preset-buttons">
+                                <button class="btn btn-xs btn-outline-preset" data-preset="upsc">UPSC</button>
+                                <button class="btn btn-xs btn-outline-preset" data-preset="jee">JEE</button>
+                                <button class="btn btn-xs btn-outline-preset" data-preset="neet">NEET</button>
+                            </div>
+                        </div>
+
+                        <!-- Subjects Chips list -->
+                        <div class="subject-chips-container">
+                            <div class="chips-label">Active Subjects:</div>
+                            <div id="subject-chips" class="subject-chips">
+                                <!-- Dynamic chips will go here -->
+                                <p class="empty-chips-text">No subjects added. Add one above or select a preset!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Backup and Reset Utilities -->
+                    <div class="glass-card utility-card">
+                        <div class="card-header">
+                            <div class="card-title-group">
+                                <i data-lucide="settings" class="text-zinc"></i>
+                                <h2>Data Management</h2>
+                            </div>
+                        </div>
+                        <div class="utility-actions">
+                            <button id="btn-export-data" class="btn btn-outline btn-block btn-xs">
+                                <i data-lucide="download"></i> Export Data Backup
+                            </button>
+                            <button id="btn-import-data" class="btn btn-outline btn-block btn-xs">
+                                <i data-lucide="upload"></i> Import Data Backup
+                            </button>
+                            <input type="file" id="import-file-input" style="display:none;" accept=".json">
+                            <button id="btn-demo-data" class="btn btn-outline-accent btn-block btn-xs">
+                                <i data-lucide="wand-2"></i> Populate 7-Day Demo Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. WEEKLY REPORT VIEW -->
+        <section id="report-view" class="view-section hidden">
+            <div class="report-header">
+                <div class="report-header-text">
+                    <h1>Weekly Prep Analytics</h1>
+                    <p>Track your preparation volume over the last 7 days and see your focus areas.</p>
+                </div>
+                <div class="report-header-actions">
+                    <button id="btn-export-report" class="btn btn-outline-accent btn-sm locked" title="Unlock with StudyTrack Premium" disabled>
+                        <i data-lucide="lock" class="btn-lock-icon"></i>
+                        <i data-lucide="file-text"></i> Export Study Report
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats grid for 7-day overview -->
+            <div class="stats-grid">
+                <div class="glass-card stat-card">
+                    <span class="stat-label">Total Time (Past 7 Days)</span>
+                    <h2 class="stat-value" id="stats-total-time">0.0 hours</h2>
+                    <p class="stat-desc">Your total preparation volume.</p>
+                </div>
+                <div class="glass-card stat-card">
+                    <span class="stat-label">Daily Average Study Time</span>
+                    <h2 class="stat-value" id="stats-daily-average">0.0 hours</h2>
+                    <p class="stat-desc">Consistency index over 7 days.</p>
+                </div>
+                <div class="glass-card stat-card">
+                    <span class="stat-label">Most Focused Subject</span>
+                    <h2 class="stat-value" id="stats-top-subject">None</h2>
+                    <p class="stat-desc" id="stats-top-subject-duration">0 hours logged.</p>
+                </div>
+            </div>
+
+            <!-- Graph container -->
+            <div class="glass-card chart-card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <i data-lucide="bar-chart-3" class="text-primary"></i>
+                        <h2>Study Hours per Subject (Last 7 Days)</h2>
+                    </div>
+                    <span class="chart-legend-hint">Hover bars to see exact durations</span>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="weekly-study-chart"></canvas>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <p>&copy; 2026 StudyTrack. Built with passion for competitive exam aspirants.</p>
+            <div class="footer-links">
+                <a href="#landing-view" id="footer-home-link">Home</a>
+                <a href="https://upsc.gov.in" target="_blank" rel="noopener noreferrer">UPSC</a>
+                <a href="https://jeemain.nta.ac.in" target="_blank" rel="noopener noreferrer">JEE Main</a>
+                <a href="https://neet.nta.nic.in" target="_blank" rel="noopener noreferrer">NEET</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- App Script -->
+    <script src="app.js"></script>
+</body>
+</html>
